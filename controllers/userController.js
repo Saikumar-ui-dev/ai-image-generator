@@ -58,6 +58,32 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getUsers = async (req, res) => {
+  try {
+    // Retrieve all users from the database
+    const users = await User.find();
+
+    // Check if users are found
+    if (!users || users.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No users found" });
+    }
+
+    // Return the list of users, excluding passwords for security
+    const userDetails = users.map((user) => ({
+      name: user.name,
+      email: user.email,
+    }));
+
+    res.status(200).json({ success: true, users: userDetails });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 const userCredits = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -164,4 +190,4 @@ const userCredits = async (req, res) => {
 //   }
 // }
 
-export { registerUser, loginUser, userCredits };
+export { registerUser, loginUser, userCredits,getUsers };
